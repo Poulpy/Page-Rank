@@ -5,7 +5,7 @@
 
 #include <Eigen/SparseCore>
 
-#define TEST_FILEPATH "../resources/email-Eu-core.txt"
+#define TEST_FILEPATH "resources/email-Eu-core.txt"
 
 using Eigen::SparseMatrix;
 using Eigen::VectorXd;
@@ -28,7 +28,8 @@ void page_rank_power_method_process(string graph_filepath,
                                     string output_filepath, double damping,
                                     int max_iterations, double epsilon) {
 
-    std::ifstream file(graph_filepath);
+    std::ifstream file;
+    ofstream output_file;
     std::vector<T> triplet_list;
     VectorXd v;
     double maximum = 0.0;
@@ -38,6 +39,7 @@ void page_rank_power_method_process(string graph_filepath,
     // that's a random number, could be anything as long as it's big
     triplet_list.reserve(2000);
 
+    file.open(graph_filepath);
     while (file >> n1 >> n2) {
         maximum = std::max(maximum, n1);
         maximum = std::max(maximum, n2);
@@ -57,14 +59,10 @@ void page_rank_power_method_process(string graph_filepath,
     v = page_rank_power_method(graph, nodes_count, damping, max_iterations,
                                epsilon);
 
-    // TODO write to file
-    ofstream output_file;
     output_file.open(output_filepath);
     for (auto i = 0; i != v.size(); i++) {
         output_file << v(i) << "\n";
     }
-    //std::ostream_iterator<std::string> output_iterator(output_file, "\n");
-    //std::copy(v.begin(), v.end(), output_iterator);
     output_file.close();
 }
 
@@ -127,7 +125,7 @@ int main(int argc, char **argv) {
     std::cout << max << std::endl;
     std::cout << eps << std::endl;
 
-    page_rank_power_method_process(TEST_FILEPATH, "output.txt", d, max, eps);
+    page_rank_power_method_process(TEST_FILEPATH, "resources/output.txt", d, max, eps);
 }
 
 
