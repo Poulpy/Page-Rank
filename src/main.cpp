@@ -1,6 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <iterator>
 
 #include <Eigen/SparseCore>
 
@@ -12,12 +13,75 @@ using namespace std;
 
 typedef Eigen::Triplet<int> T;
 
+void page_rank_power_method_process(string graph_filepath,
+                                    string output_filepath, double damping,
+                                    int max_iterations, double epsilon);
+
+VectorXd page_rank_power_method(SparseMatrix<double> matrix,
+                                unsigned nodes_count, double d,
+                                int max_iterations, double epsilon);
+
+/**
+ * Reads a graph from a file and writes the eigenvector to a file
+ */
+void page_rank_power_method_process(string graph_filepath,
+                                    string output_filepath, double damping,
+                                    int max_iterations, double epsilon) {
+
+    std::ifstream file(graph_filepath);
+    std::vector<T> triplet_list;
+    VectorXd v;
+    double maximum = 0.0;
+    double n1 = 0.0, n2 = 0.0;
+    unsigned nodes_count;
+
+    // that's a random number, could be anything as long as it's big
+    triplet_list.reserve(2000);
+
+    while (file >> n1 >> n2) {
+        maximum = std::max(maximum, n1);
+        maximum = std::max(maximum, n2);
+
+        triplet_list.push_back(T(n1, n2, 1));
+        triplet_list.push_back(T(n2, n1, 1));
+    }
+    file.close();
+
+    nodes_count = maximum + 1;
+
+    // +1 is needed, don't ask me why
+    SparseMatrix<double> graph(maximum + 1, maximum + 1);
+
+    graph.setFromTriplets(triplet_list.begin(), triplet_list.end());
+
+    v = page_rank_power_method(graph, nodes_count, damping, max_iterations,
+                               epsilon);
+
+    // TODO write to file
+    ofstream output_file;
+    output_file.open(output_filepath);
+    for (auto i = 0; i != v.size(); i++) {
+        output_file << v(i) << "\n";
+    }
+    //std::ostream_iterator<std::string> output_iterator(output_file, "\n");
+    //std::copy(v.begin(), v.end(), output_iterator);
+    output_file.close();
+}
+
+/**
+ * Page rank algorithm with the power method
+ *
+ * matrix: adjacency list of the graph
+ * d: damping
+ * max_iterations:
+ * epsilon:
+ */
 VectorXd page_rank_power_method(SparseMatrix<double> matrix,
                                 unsigned nodes_count, double d,
                                 int max_iterations, double epsilon) {
 
     VectorXd v(nodes_count);
-    for (int i = 0; i != nodes_count; i++) v[i] = 1 / nodes_count;
+    for (size_t i = 0; i != nodes_count; i++) v[i] = 1 / nodes_count;
     VectorXd v_last(nodes_count);
     int err;
 
@@ -59,47 +123,11 @@ int main(int argc, char **argv) {
         stringstream(argv[3]) >> eps;
     }
 
-
     std::cout << d << std::endl;
     std::cout << max << std::endl;
     std::cout << eps << std::endl;
 
-    
-    // File pointer
-    std::ifstream fin(TEST_FILEPATH);
-  
-    std::vector<T> tripletList;
-    tripletList.reserve(2000);
-
-    // https://www.geeksforgeeks.org/csv-file-management-using-c/
-    // Read the Data from the file
-    // as String Vector
-    vector<string> row;
-    string line, word, temp;
-    double maximum = 0.0;
-    int i = 0;
-    double n1 = 0.0, n2 = 0.0;
-
-    while (fin >> n1 >> n2) {
-        maximum = std::max(maximum, n1);
-        maximum = std::max(maximum, n2);
-
-        tripletList.push_back(T(n1, n2, 1));
-        tripletList.push_back(T(n2, n1, 1));
-    }
-
-    cout << "Maximum is " << maximum << endl;
-
-    unsigned nodesCount = maximum + 1;
-
-    // +1 is needed, don't ask me why
-    SparseMatrix<double> A(maximum + 1, maximum + 1);
-
-    A.setFromTriplets(tripletList.begin(), tripletList.end());
-    //std::cout << A << std::endl;
-    fin.close();
-
-    VectorXd v = page_rank_power_method(A, nodesCount, d, max, eps);
+    page_rank_power_method_process(TEST_FILEPATH, "output.txt", d, max, eps);
 }
 
 
