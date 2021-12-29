@@ -7,9 +7,36 @@
 #define TEST_FILEPATH "../resources/email-Eu-core.txt"
 
 using Eigen::SparseMatrix;
+using Eigen::VectorXd;
 using namespace std;
 
 typedef Eigen::Triplet<int> T;
+
+VectorXd page_rank_power_method(SparseMatrix<double> matrix,
+                                unsigned nodes_count, double d,
+                                int max_iterations, double epsilon) {
+
+    VectorXd v(nodes_count);
+    for (int i = 0; i != nodes_count; i++) v[i] = 1 / nodes_count;
+    VectorXd v_last(nodes_count);
+    int err;
+
+    for (size_t i = 0; i != max_iterations; i++) {
+        v_last = v;
+        v = matrix * v;
+        err = 0;
+
+        for (size_t j = 0; j != nodes_count; j++) {
+            err += err + std::fabs(v[j] - v_last[j]);
+        }
+
+        if (err < epsilon) {
+            return v;
+        }
+    }
+
+    return v;
+}
 
 /**
  * d = 0.15, damping factor
@@ -49,9 +76,9 @@ int main(int argc, char **argv) {
     // as String Vector
     vector<string> row;
     string line, word, temp;
-    int maximum = 0;
+    double maximum = 0.0;
     int i = 0;
-    int n1 = 0, n2 = 0;
+    double n1 = 0.0, n2 = 0.0;
 
     while (fin >> n1 >> n2) {
         maximum = std::max(maximum, n1);
@@ -63,10 +90,16 @@ int main(int argc, char **argv) {
 
     cout << "Maximum is " << maximum << endl;
 
-    SparseMatrix<unsigned> A(maximum + 1, maximum + 1);
+    unsigned nodesCount = maximum + 1;
+
+    // +1 is needed, don't ask me why
+    SparseMatrix<double> A(maximum + 1, maximum + 1);
 
     A.setFromTriplets(tripletList.begin(), tripletList.end());
     //std::cout << A << std::endl;
     fin.close();
+
+    VectorXd v = page_rank_power_method(A, nodesCount, d, max, eps);
 }
+
 
