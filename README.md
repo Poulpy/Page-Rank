@@ -1,14 +1,19 @@
 # Page rank
 
+Simple implementation of the page rank algorithm, more specifically the power
+method. The implementation is done in C++ with the Eigen library.
+
+## Compilation
 
 ```
-g++ -I /usr/local/include/eigen3/ main.cpp 
-./a.out 0.1 222 0.0001
-// default values
-./a.out
+make
+
+# Run with default values
+./bin/a.out
+
+# Run with set values
+./bin/a.out 0.1 10000 0.00001
 ```
 
 # TODO
 
-- get file path as parameter
-- page rank
