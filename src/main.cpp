@@ -81,7 +81,7 @@ VectorXd page_rank_power_method(SparseMatrix<double> matrix,
                                 int max_iterations, double epsilon) {
 
     VectorXd v(nodes_count);
-    for (size_t i = 0; i != nodes_count; i++) v[i] = 1 / nodes_count;
+    for (size_t i = 0; i != nodes_count; i++) v[i] = 1.0 / nodes_count;
     VectorXd v_last(nodes_count);
     int err;
 
