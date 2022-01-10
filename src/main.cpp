@@ -3,12 +3,10 @@
 #include <fstream>
 #include <iterator>
 
-#include <Eigen/SparseCore>
+#include "Matrix.hpp"
 
 #define TEST_FILEPATH "resources/email-Eu-core.txt"
 
-using Eigen::SparseMatrix;
-using Eigen::VectorXd;
 using namespace std;
 
 typedef Eigen::Triplet<int> T;
