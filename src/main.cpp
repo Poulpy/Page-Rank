@@ -94,7 +94,11 @@ VectorXd page_rank_power_method(SparseMatrix<double> matrix,
             return v;
         }
     }
+    cout << "truc"
 
+    for (size_t i = 0; i != nodes_count; i++)
+        cout << v[i] << endl;
+    
     return v;
 }
 
