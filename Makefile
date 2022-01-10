@@ -1,6 +1,6 @@
 all:
 	mkdir -p bin
-	g++ -I /usr/local/include/eigen3/ src/main.cpp -o bin/a.out
+	g++ src/main.cpp -o bin/a.out -Wall -g -fopenmp
 
 clean:
 	rm -f bin

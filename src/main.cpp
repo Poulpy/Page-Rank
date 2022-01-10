@@ -5,64 +5,7 @@
 
 #include "Matrix.hpp"
 
-#define TEST_FILEPATH "resources/email-Eu-core.txt"
-
 using namespace std;
-
-typedef Eigen::Triplet<int> T;
-
-void page_rank_power_method_process(string graph_filepath,
-                                    string output_filepath, double damping,
-                                    int max_iterations, double epsilon);
-
-VectorXd page_rank_power_method(SparseMatrix<double> matrix,
-                                unsigned nodes_count, double d,
-                                int max_iterations, double epsilon);
-
-/**
- * Reads a graph from a file and writes the eigenvector to a file
- */
-void page_rank_power_method_process(string graph_filepath,
-                                    string output_filepath, double damping,
-                                    int max_iterations, double epsilon) {
-
-    std::ifstream file;
-    ofstream output_file;
-    std::vector<T> triplet_list;
-    VectorXd v;
-    double maximum = 0.0;
-    double n1 = 0.0, n2 = 0.0;
-    unsigned nodes_count;
-
-    // that's a random number, could be anything as long as it's big
-    triplet_list.reserve(2000);
-
-    file.open(graph_filepath);
-    while (file >> n1 >> n2) {
-        maximum = std::max(maximum, n1);
-        maximum = std::max(maximum, n2);
-
-        triplet_list.push_back(T(n1, n2, 1));
-        triplet_list.push_back(T(n2, n1, 1));
-    }
-    file.close();
-
-    nodes_count = maximum + 1;
-
-    // +1 is needed, don't ask me why
-    SparseMatrix<double> graph(maximum + 1, maximum + 1);
-
-    graph.setFromTriplets(triplet_list.begin(), triplet_list.end());
-
-    v = page_rank_power_method(graph, nodes_count, damping, max_iterations,
-                               epsilon);
-
-    output_file.open(output_filepath);
-    for (auto i = 0; i != v.size(); i++) {
-        output_file << v(i) << "\n";
-    }
-    output_file.close();
-}
 
 /**
  * Page rank algorithm with the power method
@@ -72,19 +15,28 @@ void page_rank_power_method_process(string graph_filepath,
  * max_iterations:
  * epsilon:
  */
-VectorXd page_rank_power_method(SparseMatrix<double> matrix,
-                                unsigned nodes_count, double d,
-                                int max_iterations, double epsilon) {
+vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
+                                      double damping = 0.85,
+                                      size_t max_iterations = 100,
+                                      double epsilon = 0.000001) {
 
-    VectorXd v(nodes_count);
-    for (size_t i = 0; i != nodes_count; i++) v[i] = 1.0 / nodes_count;
-    VectorXd v_last(nodes_count);
-    int err;
+    vector<double> v(nodes_count);
+    for (size_t i = 0; i != nodes_count; i++) v[i] = ((double) rand() / (RAND_MAX));
+
+    MatrixD e(nodes_count, nodes_count);
+    e *= 0;
+    e += (1.0 - damping) / nodes_count;
+
+    MatrixD hat_matrix = matrix * damping;
+    hat_matrix += e;
+
+    vector<double> v_last(nodes_count);
+    double err;
 
     for (size_t i = 0; i != max_iterations; i++) {
         v_last = v;
-        v = matrix * v;
-        err = 0;
+        v = hat_matrix * v;
+        err = 0.0;
 
         for (size_t j = 0; j != nodes_count; j++) {
             err += err + std::fabs(v[j] - v_last[j]);
@@ -94,40 +46,59 @@ VectorXd page_rank_power_method(SparseMatrix<double> matrix,
             return v;
         }
     }
-    cout << "truc"
 
-    for (size_t i = 0; i != nodes_count; i++)
-        cout << v[i] << endl;
-    
     return v;
 }
 
-/**
- * d = 0.15, damping factor
- * max = 100, maximum iterations
- * eps = 1.10⁻9
- */
-int main(int argc, char **argv) {
+int main() {
+    std::ifstream file;
+    std::ofstream output_file;
+    vector<std::pair<int, int>> pairs;
+    int maximum = 0;
+    int n1 = 0, n2 = 0;
+    size_t nodes_count;
 
-    double d;
-    unsigned max;
-    double eps;
+    file.open("resources/joshua.txt");
+    while (file >> n1 >> n2) {
+        maximum = max(maximum, n1);
+        maximum = max(maximum, n2);
 
-    if (argc < 4) {
-        d = 0.15;
-        max = 100;
-        eps = 0.000001;
-    } else {
-        stringstream(argv[1]) >> d;
-        stringstream(argv[2]) >> max;
-        stringstream(argv[3]) >> eps;
+        pairs.push_back( { n1, n2 });
+    }
+    file.close();
+    nodes_count = maximum;
+    MatrixD matrix(nodes_count, nodes_count);
+
+    // init with 0
+    matrix *= 0.0;
+    for (size_t i = 0; i != pairs.size(); i++) {
+        matrix(pairs.at(i).first - 1, pairs.at(i).second - 1) = 1.0;
+        matrix(pairs.at(i).second - 1, pairs.at(i).first - 1) = 1.0;
     }
 
-    std::cout << d << std::endl;
-    std::cout << max << std::endl;
-    std::cout << eps << std::endl;
+    for (size_t i = 0; i != matrix.nCols(); i++) {
+        int count = 0;
+        for (size_t j = 0; j != matrix.nRows(); j++) {
+            if (matrix(j, i) == 1.0) {
+                count++;
+            }
+        }
+        for (size_t j = 0; j != matrix.nRows(); j++) {
+            if (matrix(j, i) == 1.0) {
+                matrix(j, i) = matrix(j, i) / count;
+            }
+        }
+    }
 
-    page_rank_power_method_process(TEST_FILEPATH, "resources/output.txt", d, max, eps);
+
+    auto result = page_rank_power_method(matrix, nodes_count);
+
+    output_file.open("outputjoshua.txt");
+
+    for (size_t i = 0; i != result.size(); i++) {
+        output_file << result[i] << "\n";
+    }
+    output_file.close();
+
+    return 0;
 }
-
-
