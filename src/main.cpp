@@ -7,6 +7,16 @@
 
 using namespace std;
 
+double vector_norm(vector<double> v) {
+    double result = 0.0;
+
+    for (size_t i = 0; i != v.size(); i++) {
+        result += pow(v.at(i), 2.0);
+    }
+
+    return sqrt(result);
+}
+
 /**
  * Page rank algorithm with the power method
  *
@@ -21,23 +31,23 @@ vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
                                       double epsilon = 0.000001) {
 
     vector<double> v(nodes_count);
+    vector<double> v_last(nodes_count);
+    double err, norm;
+
     for (size_t i = 0; i != nodes_count; i++) v[i] = ((double) rand() / (RAND_MAX));
 
-    MatrixD e(nodes_count, nodes_count);
-    e *= 0;
-    e += (1.0 - damping) / nodes_count;
+    norm = vector_norm(v);
+
+    for (size_t i = 0; i != nodes_count; i++) v[i] = v[i] / norm;
 
     MatrixD hat_matrix = matrix * damping;
-    hat_matrix += e;
-
-    vector<double> v_last(nodes_count);
-    double err;
+    hat_matrix += (1.0 - damping) / nodes_count;
 
     for (size_t i = 0; i != max_iterations; i++) {
         v_last = v;
         v = hat_matrix * v;
+        /*
         err = 0.0;
-
         for (size_t j = 0; j != nodes_count; j++) {
             err += err + std::fabs(v[j] - v_last[j]);
         }
@@ -45,6 +55,7 @@ vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
         if (err < epsilon) {
             return v;
         }
+        */
     }
 
     return v;
@@ -72,7 +83,7 @@ int main() {
     // init with 0
     matrix *= 0.0;
     for (size_t i = 0; i != pairs.size(); i++) {
-        matrix(pairs.at(i).first - 1, pairs.at(i).second - 1) = 1.0;
+        //matrix(pairs.at(i).first - 1, pairs.at(i).second - 1) = 1.0;
         matrix(pairs.at(i).second - 1, pairs.at(i).first - 1) = 1.0;
     }
 
@@ -89,7 +100,6 @@ int main() {
             }
         }
     }
-
 
     auto result = page_rank_power_method(matrix, nodes_count);
 
