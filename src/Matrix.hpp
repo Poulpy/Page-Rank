@@ -464,10 +464,10 @@ class Matrix {
   friend vector<double> operator*(const Matrix &m, std::vector<double> v) {
     vector<double> result(v.size());
 
-    for (size_t i = 0; i < m.mCols; i++) {
+    for (size_t i = 0; i < m.mRows; i++) {
       result[i] = 0;
 
-      for (size_t j = 0; j < m.mRows; j++) {
+      for (size_t j = 0; j < m.mCols; j++) {
         result[i] += v[j] * m(i, j);
       }
     }

@@ -8,126 +8,152 @@
 
 using namespace std;
 
+/**
+ *
+ * https://isarth.github.io/pagerank/
+ */
+vector<double> page_rank_power_method(MatrixD transition_matrix,
+                                      vector<double> v, size_t nodes,
+                                      double damping = 0.85,
+                                      size_t max_iterations = 100,
+                                      double epsilon = 0.0001) {
+
+    double err;
+    vector<double> r(nodes), rlast(nodes);
+    MatrixD hat_m(nodes, nodes), e;
+
+    r = v;
+    e = MatrixD::fill(nodes, nodes, 1);// matrix of all ones
+
+    hat_m = damping * transition_matrix + ((1 - damping) / nodes) * e;
+
+    err = 123.0;
+    for (size_t i = 0; i != max_iterations && err > epsilon; i++) {
+        rlast = r;
+
+        r = hat_m * r;
+
+        err = 0.0;
+        for (size_t j = 0; j != r.size(); j++) err += fabs(r[j] - rlast[j]);
+    }
+
+    return r;
+}
+
+/**
+ */
 double vector_norm(vector<double> v) {
     double result = 0.0;
 
     for (size_t i = 0; i != v.size(); i++) {
-        result = result + v[i] * v[i];
+        result += v[i] * v[i];
     }
 
     return sqrt(result);
 }
 
 /**
- * Page rank algorithm with the power method
- *
- * matrix: adjacency list of the graph
- * d: damping
- * max_iterations:
- * epsilon:
+ * to adjacency list of a stochastic matrix
  */
-vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
-                                      double damping = 0.85,
-                                      size_t max_iterations = 100,
-                                      double epsilon = 0.00000001) {
+MatrixD read_matrix_from_file(string filepath) {
+    std::ifstream file;
+    vector<std::pair<int, int>> pairs;
+    int n1, n2;
+    int nodes = 0;
 
-    vector<double> v(nodes_count);
-    vector<double> v_last(nodes_count);
-    double err, norm;
+    file.open(filepath);
+    while (file >> n1 >> n2) {
+        nodes = max(nodes, n1);
+        nodes = max(nodes, n2);
 
-    srand(time(0));
+        pairs.push_back({ n1, n2 });
+    }
+    file.close();
 
-    for (size_t i = 0; i != nodes_count; i++) v[i] = ((double) rand() / (RAND_MAX));
+    MatrixD matrix = MatrixD::fill(nodes, nodes, 0.0);
 
-    cout << "random v : ";
-    for (size_t i = 0; i != nodes_count; i++) cout << v[i] << ",";
-    cout << endl;
+    for (size_t i = 0; i != pairs.size(); i++) {
+        // nodes often starts at 1, and the matrix index starts at 0, hence
+        // the - 1
+        matrix(pairs.at(i).second - 1, pairs.at(i).first - 1) = 1.0;
+    }
 
-    // normalize vector, so that the sum is equal to one
-    norm = vector_norm(v);
-    for (size_t i = 0; i != nodes_count; i++) v[i] /= norm;
-    cout << "norm : ";
-    cout << norm << endl;
-    norm = vector_norm(v);
-    cout << "norm after : ";
-    cout << norm << endl;
-    cout << "random v / norm : ";
-    for (size_t i = 0; i != nodes_count; i++) cout << v[i] << ",";
-    cout << endl;
+    return matrix;
+}
 
+MatrixD adjacency_list_to_transition_matrix(MatrixD m) {
+    int count;
+    MatrixD result = m;
 
-    MatrixD hat_matrix = matrix * damping;
-    hat_matrix += (1.0 - damping) / nodes_count;
-
-    for (size_t i = 0; i != max_iterations; i++) {
-        v_last = v;
-        v = hat_matrix * v;
-
-        //cout << "v after";
-        //for (size_t i = 0; i != nodes_count; i++) cout << v[i] << ", ";
-        //cout << endl;
-
-        err = 0.0;
-        for (size_t j = 0; j != nodes_count; j++) {
-            err += err + std::fabs(v[j] - v_last[j]);
+    for (size_t i = 0; i != m.nCols(); i++) {
+        count = 0;
+        for (size_t j = 0; j != m.nRows(); j++) {
+            if (result(j, i) == 1.0) {
+                count++;
+            }
         }
 
-        if (err < epsilon) {
-            return v;
+        for (size_t j = 0; j != m.nRows(); j++) {
+            if (result(j, i) == 1.0) {
+                result(j, i) = result(j, i) / count;
+            }
         }
     }
+
+    return result;
+}
+
+/**
+ */
+void write_vector_to_file(vector<double> v, string filepath) {
+    std::ofstream output_file;
+    output_file.open(filepath);
+
+    for (size_t i = 0; i != v.size(); i++) {
+        output_file << v[i] << "\n";
+    }
+
+    output_file.close();
+}
+
+/**
+ * |R| = 1
+ */
+vector<double> probability_distribution(size_t size) {
+    vector<double> v(size);
+
+    for (size_t i = 0; i != v.size(); i++) v[i] = 1.0 / size;
 
     return v;
 }
 
-int main() {
-    std::ifstream file;
-    std::ofstream output_file;
-    vector<std::pair<int, int>> pairs;
-    int maximum = 0;
-    int n1 = 0, n2 = 0;
-    int nodes_count;
+int main(int argc, char **argv) {
+    string input_file, output_file;
+    size_t nodes;
+    vector<double> v, result;
+    MatrixD m, tm;
 
-    file.open("resources/joshua.txt");
-    while (file >> n1 >> n2) {
-        maximum = max(maximum, n1);
-        maximum = max(maximum, n2);
-
-        pairs.push_back( { n1, n2 });
-    }
-    file.close();
-    nodes_count = maximum;
-    MatrixD matrix(nodes_count, nodes_count);
-
-    // init with 0
-    matrix *= 0.0;
-    for (size_t i = 0; i != pairs.size(); i++) {
-        //matrix(pairs.at(i).first - 1, pairs.at(i).second - 1) = 1.0;
-        matrix(pairs.at(i).second - 1, pairs.at(i).first - 1) = 1.0;
+    if (argc != 3) {
+        cout << "Not enough parameters" << endl;
+        return 0;
     }
 
-    for (size_t i = 0; i != matrix.nCols(); i++) {
-        int count = 0;
-        for (size_t j = 0; j != matrix.nRows(); j++) {
-            if (matrix(j, i) == 1.0) {
-                count++;
-            }
-        }
-        for (size_t j = 0; j != matrix.nRows(); j++) {
-            if (matrix(j, i) == 1.0) {
-                matrix(j, i) = matrix(j, i) / count;
-            }
-        }
-    }
+    stringstream(argv[1]) >> input_file;
+    stringstream(argv[2]) >> output_file;
 
-    auto result = page_rank_power_method(matrix, nodes_count);
+    m = read_matrix_from_file(input_file);
 
-    output_file.open("outputjoshua.txt");
+    nodes = m.nCols();// or nRows()
 
-    for (size_t i = 0; i != result.size(); i++) {
-        output_file << result[i] << "\n";
-    }
-    output_file.close();
+    v = probability_distribution(nodes);
+    for (size_t i = 0; i != v.size(); i++) cout << v[i] << ", "; cout << endl;
+
+    tm = adjacency_list_to_transition_matrix(m);
+
+    result = page_rank_power_method(tm, v, nodes);
+
+    write_vector_to_file(result, output_file);
 
     return 0;
 }
+
