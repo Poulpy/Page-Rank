@@ -1,6 +1,6 @@
 all:
 	mkdir -p bin
-	g++ src/main2.cpp -o bin/a.out -Wall -g -fopenmp
+	g++ src/main.cpp -o bin/a.out -Wall -g -fopenmp -O2
 
 clean:
 	rm -rf bin

@@ -146,7 +146,6 @@ int main(int argc, char **argv) {
     nodes = m.nCols();// or nRows()
 
     v = probability_distribution(nodes);
-    for (size_t i = 0; i != v.size(); i++) cout << v[i] << ", "; cout << endl;
 
     tm = adjacency_list_to_transition_matrix(m);
 
