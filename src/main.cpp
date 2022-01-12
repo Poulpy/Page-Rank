@@ -2,6 +2,7 @@
 #include <sstream>
 #include <fstream>
 #include <iterator>
+#include <ctime>
 
 #include "Matrix.hpp"
 
@@ -11,7 +12,7 @@ double vector_norm(vector<double> v) {
     double result = 0.0;
 
     for (size_t i = 0; i != v.size(); i++) {
-        result += pow(v.at(i), 2.0);
+        result = result + v[i] * v[i];
     }
 
     return sqrt(result);
@@ -28,17 +29,32 @@ double vector_norm(vector<double> v) {
 vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
                                       double damping = 0.85,
                                       size_t max_iterations = 100,
-                                      double epsilon = 0.000001) {
+                                      double epsilon = 0.00000001) {
 
     vector<double> v(nodes_count);
     vector<double> v_last(nodes_count);
     double err, norm;
 
+    srand(time(0));
+
     for (size_t i = 0; i != nodes_count; i++) v[i] = ((double) rand() / (RAND_MAX));
 
-    norm = vector_norm(v);
+    cout << "random v : ";
+    for (size_t i = 0; i != nodes_count; i++) cout << v[i] << ",";
+    cout << endl;
 
-    for (size_t i = 0; i != nodes_count; i++) v[i] = v[i] / norm;
+    // normalize vector, so that the sum is equal to one
+    norm = vector_norm(v);
+    for (size_t i = 0; i != nodes_count; i++) v[i] /= norm;
+    cout << "norm : ";
+    cout << norm << endl;
+    norm = vector_norm(v);
+    cout << "norm after : ";
+    cout << norm << endl;
+    cout << "random v / norm : ";
+    for (size_t i = 0; i != nodes_count; i++) cout << v[i] << ",";
+    cout << endl;
+
 
     MatrixD hat_matrix = matrix * damping;
     hat_matrix += (1.0 - damping) / nodes_count;
@@ -46,7 +62,11 @@ vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
     for (size_t i = 0; i != max_iterations; i++) {
         v_last = v;
         v = hat_matrix * v;
-        /*
+
+        //cout << "v after";
+        //for (size_t i = 0; i != nodes_count; i++) cout << v[i] << ", ";
+        //cout << endl;
+
         err = 0.0;
         for (size_t j = 0; j != nodes_count; j++) {
             err += err + std::fabs(v[j] - v_last[j]);
@@ -55,7 +75,6 @@ vector<double> page_rank_power_method(MatrixD matrix, size_t nodes_count,
         if (err < epsilon) {
             return v;
         }
-        */
     }
 
     return v;
@@ -67,7 +86,7 @@ int main() {
     vector<std::pair<int, int>> pairs;
     int maximum = 0;
     int n1 = 0, n2 = 0;
-    size_t nodes_count;
+    int nodes_count;
 
     file.open("resources/joshua.txt");
     while (file >> n1 >> n2) {
