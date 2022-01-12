@@ -460,7 +460,8 @@ class Matrix {
   }
 
 
-  // paul
+  // Author: Poulpy
+  // Matrix vector product
   friend vector<double> operator*(const Matrix &m, std::vector<double> v) {
     vector<double> result(v.size());
 
