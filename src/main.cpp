@@ -9,8 +9,10 @@
 using namespace std;
 
 /**
+ * Page rank implementation method
  *
- * https://isarth.github.io/pagerank/
+ * reference: https://isarth.github.io/pagerank/
+ *            wikipedia article on page rank
  */
 vector<double> page_rank_power_method(MatrixD transition_matrix,
                                       vector<double> v, size_t nodes,
@@ -27,7 +29,7 @@ vector<double> page_rank_power_method(MatrixD transition_matrix,
 
     hat_m = damping * transition_matrix + ((1 - damping) / nodes) * e;
 
-    err = 123.0;
+    err = 123.0;// random number, must be > 0 at start
     for (size_t i = 0; i != max_iterations && err > epsilon; i++) {
         rlast = r;
 
@@ -38,18 +40,6 @@ vector<double> page_rank_power_method(MatrixD transition_matrix,
     }
 
     return r;
-}
-
-/**
- */
-double vector_norm(vector<double> v) {
-    double result = 0.0;
-
-    for (size_t i = 0; i != v.size(); i++) {
-        result += v[i] * v[i];
-    }
-
-    return sqrt(result);
 }
 
 /**
@@ -81,6 +71,11 @@ MatrixD read_matrix_from_file(string filepath) {
     return matrix;
 }
 
+/**
+ * Converts an adjacency list to a transition matrix
+ * We divide the links (1) with the number of neighbours
+ * The matrix must be column stochastic
+ */
 MatrixD adjacency_list_to_transition_matrix(MatrixD m) {
     int count;
     MatrixD result = m;
@@ -104,6 +99,7 @@ MatrixD adjacency_list_to_transition_matrix(MatrixD m) {
 }
 
 /**
+ * Writes a vector to a file
  */
 void write_vector_to_file(vector<double> v, string filepath) {
     std::ofstream output_file;
@@ -117,7 +113,8 @@ void write_vector_to_file(vector<double> v, string filepath) {
 }
 
 /**
- * |R| = 1
+ * Returns a vector filled with the value 1/size. The sum of all elements then
+ * is 1
  */
 vector<double> probability_distribution(size_t size) {
     vector<double> v(size);
