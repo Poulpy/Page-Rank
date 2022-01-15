@@ -1,8 +1,9 @@
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <iterator>
+#include <chrono>
 #include <ctime>
+#include <fstream>
+#include <iostream>
+#include <iterator>
+#include <sstream>
 
 #include "Matrix.hpp"
 
@@ -148,9 +149,12 @@ int main(int argc, char **argv) {
 
     tm = adjacency_list_to_transition_matrix(m);
 
+    auto start = chrono::steady_clock::now();
     result = page_rank_power_method(tm, v, nodes, damping);
+    auto end = chrono::steady_clock::now();
 
     write_vector_to_file(result, output_file);
+    cout << chrono::duration_cast<chrono::milliseconds>(end - start).count() <<" milliseconds" << endl;
 
     return 0;
 }
