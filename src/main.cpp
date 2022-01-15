@@ -60,12 +60,12 @@ MatrixD read_matrix_from_file(string filepath) {
     }
     file.close();
 
-    MatrixD matrix = MatrixD::fill(nodes, nodes, 0.0);
+    MatrixD matrix = MatrixD::fill(nodes + 1, nodes + 1, 0.0);
 
     for (size_t i = 0; i != pairs.size(); i++) {
-        // nodes often starts at 1, and the matrix index starts at 0, hence
-        // the - 1
-        matrix(pairs.at(i).second - 1, pairs.at(i).first - 1) = 1.0;
+        // OLD: nodes often starts at 1, and the matrix index starts at 0,
+        // hence the - 1
+        matrix(pairs.at(i).second, pairs.at(i).first) = 1.0;
     }
 
     return matrix;
@@ -129,6 +129,7 @@ int main(int argc, char **argv) {
     size_t nodes;
     vector<double> v, result;
     MatrixD m, tm;
+    double damping = 0.85;
 
     if (argc != 3) {
         cout << "Not enough parameters" << endl;
@@ -137,6 +138,7 @@ int main(int argc, char **argv) {
 
     stringstream(argv[1]) >> input_file;
     stringstream(argv[2]) >> output_file;
+    if (argc > 3) stringstream(argv[3]) >> damping;
 
     m = read_matrix_from_file(input_file);
 
@@ -146,7 +148,7 @@ int main(int argc, char **argv) {
 
     tm = adjacency_list_to_transition_matrix(m);
 
-    result = page_rank_power_method(tm, v, nodes);
+    result = page_rank_power_method(tm, v, nodes, damping);
 
     write_vector_to_file(result, output_file);
 
