@@ -131,7 +131,7 @@ int main(int argc, char **argv) {
     MatrixD m, tm;
     double damping = 0.85;
 
-    if (argc != 3) {
+    if (argc < 3) {
         cout << "Not enough parameters" << endl;
         return 0;
     }
