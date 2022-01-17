@@ -1,3 +1,5 @@
+#ifndef PAGE_RANK_HPP
+#define PAGE_RANK_HPP
 #include <chrono>
 #include <ctime>
 #include <fstream>
@@ -113,6 +115,16 @@ void write_vector_to_file(vector<double> v, string filepath) {
     output_file.close();
 }
 
+void write_vectors_to_file(vector<pair<int, double>> v, string filepath) {
+    std::ofstream output_file;
+    output_file.open(filepath);
+
+    for (size_t i = 0; i != v.size(); i++) {
+        output_file << v[i].first << " " << v[i].second << "\n";
+    }
+
+    output_file.close();
+}
 /**
  * Returns a vector filled with the value 1/size. The sum of all elements then
  * is 1
@@ -125,6 +137,7 @@ vector<double> probability_distribution(size_t size) {
     return v;
 }
 
+/*
 int main(int argc, char **argv) {
     string input_file, output_file;
     size_t nodes;
@@ -158,4 +171,6 @@ int main(int argc, char **argv) {
 
     return 0;
 }
+*/
 
+#endif
