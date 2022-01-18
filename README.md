@@ -14,3 +14,4 @@ make
 # TODO
 
 gnuplot -c scripts/chart.gp resources/p2p-Gnutella08.result.txt > resources/p2p-Gnutella08.png
+./bin/result resources/p2p-Gnutella08.txt resources/p2p-Gnutella08.85.txt 0.85
