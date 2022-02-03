@@ -137,5 +137,5 @@ vector<double> probability_distribution(size_t size) {
     return v;
 }
 
-
 #endif
+

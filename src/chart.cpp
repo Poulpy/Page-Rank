@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
     size_t nodes;
     vector<double> v, result;
     MatrixD m, tm;
-    double damping = 0.05;
+    double damping = 0.1;
     vector<int> times;
     vector<double> dampings;
     vector<pair<int, double>> results;
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     tm = adjacency_list_to_transition_matrix(m);
 
-    for (; damping <= 0.95; damping += 0.05) {
+    for (; damping <= 1.0; damping += 0.02) {
         auto start = chrono::steady_clock::now();
         result = page_rank_power_method(tm, v, nodes, damping);
         auto end = chrono::steady_clock::now();
