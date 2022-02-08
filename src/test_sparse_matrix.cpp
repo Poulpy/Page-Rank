@@ -1,6 +1,10 @@
 
 #include "SparseMatrix.hpp"
 
+/*
+ * Reads a graph from a file and returns the sparse matrix
+ * of it.
+ */
 SparseMatrix read_matrix_from_file(string filepath) {
     std::ifstream file;
     vector<tuple<size_t, size_t, double>> tuples;

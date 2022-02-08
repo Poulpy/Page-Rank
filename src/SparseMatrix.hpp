@@ -12,17 +12,23 @@ class SparseMatrix {
         size_t len;
         vector<tuple<size_t, size_t, double>> tuples;
 
+        /*
+         * Initializes a sparse matrix.
+         */
         SparseMatrix(size_t length, vector<tuple<size_t, size_t, double>> non_nulls) {
             len = length;
             tuples = non_nulls;
         }
 
+        /*
+         * Returns a copy of the matrix.
+         */
         SparseMatrix copy() {
             return SparseMatrix(len, tuples);
         }
 
         /*
-         * 
+         * Converts the matrix into a transition matrix, and returns the result.
          */
         SparseMatrix to_transition_matrix() {
             SparseMatrix new_matrix = copy();
