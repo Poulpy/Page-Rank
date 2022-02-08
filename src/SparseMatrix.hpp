@@ -17,8 +17,38 @@ class SparseMatrix {
             tuples = non_nulls;
         }
 
-        SparseMatrix to_transition_matrix() {
+        SparseMatrix copy() {
             return SparseMatrix(len, tuples);
+        }
+
+        /*
+         * 
+         */
+        SparseMatrix to_transition_matrix() {
+            SparseMatrix new_matrix = copy();
+            vector<int> counts(len, 0);
+
+            // count 1 in each column
+            for (size_t i = 0; i != new_matrix.tuples.size(); i++) {
+                double val = get<2>(new_matrix.tuples[i]);
+                size_t col = get<1>(new_matrix.tuples[i]);
+
+                if (val == 1.0) {
+                    counts[col]++;
+                }
+            }
+
+            // divide each element by the number of ones in the column
+            for (size_t i = 0; i != new_matrix.tuples.size(); i++) {
+                double val = get<2>(new_matrix.tuples[i]);
+                size_t col = get<1>(new_matrix.tuples[i]);
+
+                if (val == 1.0) {
+                    get<2>(new_matrix.tuples[i]) = val / (float) counts[col];
+                }
+            }
+
+            return new_matrix;
         }
 
         string to_string() {
