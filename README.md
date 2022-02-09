@@ -3,6 +3,11 @@
 Simple implementation of the page rank algorithm, more specifically the power
 method. The matrix implementation is done by [@douglasrizzo](https://github.com/douglasrizzo/matrix).
 
+There are severals binaries :
+- wreivtof, write eigen vector to file
+- wrprettof, write page rank execution time to file
+
+
 ## Compilation
 
 ```
