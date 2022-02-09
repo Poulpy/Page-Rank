@@ -6,6 +6,11 @@
 
 using namespace std;
 
+/*
+ * Implementation of a sparse matrix, using an array of
+ * triplets : (row, column, value). The other values are
+ * zeros
+ */
 class SparseMatrix {
 
     public:
@@ -57,6 +62,9 @@ class SparseMatrix {
             return new_matrix;
         }
 
+        /*
+         * Product matrix-vector. Returns the result.
+         */
         vector<double> dot(vector<double> v) {
             vector<double> rst(v.size(), 0.0);
 
@@ -71,6 +79,9 @@ class SparseMatrix {
             return rst;
         }
 
+        /*
+         * Returns a prettified format of the matrix.
+         */
         string to_string() {
             stringstream str_strm;
             
