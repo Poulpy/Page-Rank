@@ -57,6 +57,20 @@ class SparseMatrix {
             return new_matrix;
         }
 
+        vector<double> dot(vector<double> v) {
+            vector<double> rst(v.size(), 0.0);
+
+            for (size_t i = 0; i != tuples.size(); i++) {
+                size_t row = get<0>(tuples[i]);
+                size_t col = get<1>(tuples[i]);
+                double val = get<2>(tuples[i]);
+
+                rst.at(row) += val * v.at(col);
+            }
+
+            return rst;
+        }
+
         string to_string() {
             stringstream str_strm;
             
