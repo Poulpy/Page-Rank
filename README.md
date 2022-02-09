@@ -7,6 +7,8 @@ There are severals binaries :
 - wreivtof, write eigen vector to file
 - wrprettof, write page rank execution time to file
 
+![](results/soc-Slashdot0811.png)
+
 
 ## Compilation
 
