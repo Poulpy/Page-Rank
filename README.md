@@ -54,6 +54,13 @@ Usage :
 ./bin/wrprettof resources/email-Eu-core.txt time.txt
 ```
 
+#### ompwrprettof
+
+Runs wrprettof with OpenMP parallelization. Better than wrprettof by a few milliseconds on my laptop.
+
+```
+./bin/ompwrprettof <filepath> <output_file>
+```
 
 #### Plot of execution time
 

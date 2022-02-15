@@ -15,19 +15,19 @@ SparseMatrix read_matrix_from_file(string filepath) {
 
     file.open(filepath);
     while (file >> n1 >> n2) {
-
         nodes = max(nodes, n1);
         nodes = max(nodes, n2);
 
         tuples.push_back({ n1, n2, 1.0 });
     }
+
     file.close();
 
     return SparseMatrix(nodes + 1, tuples);
 }
 
 /*
- * Page rank implementation using a sparse matrix
+ * Page rank implementation using a sparse matrix.
  */
 vector<double> page_rank_power_method(SparseMatrix transition_matrix, double damping = 0.85,
                                       size_t max_iterations = 100, double epsilon = 0.0000001) {
@@ -42,9 +42,12 @@ vector<double> page_rank_power_method(SparseMatrix transition_matrix, double dam
         rlast = r;
 
         r = transition_matrix.dot(rlast);
+        
+        #pragma omp parallel for
         for (size_t k = 0; k != r.size(); k++) r.at(k) = damping * r.at(k) + jumping / len;
 
         err = 0.0;
+        #pragma omp parallel for
         for (size_t j = 0; j != r.size(); j++) err += fabs(r[j] - rlast[j]);
     }
 
@@ -66,7 +69,9 @@ void write_vector_to_file(string filepath, vector<double> v) {
     output_file.close();
 }
 
-
+/*
+ * Writes a vector of pairs to a file. Adds a newline to each element.
+ */
 void write_vector_of_pairs_to_file(vector<pair<int, double>> v, string filepath) {
     std::ofstream output_file;
     output_file.open(filepath);
