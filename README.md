@@ -3,7 +3,7 @@
 Simple implementation of the page rank algorithm, more specifically the power
 method.
 
-There are severals binaries :
+There are severalsbinaries :
 - wreivtof, write eigen vector to file
 - wrprettof, write page rank execution time to file
 
@@ -27,8 +27,7 @@ make
 ### wreivtof
 
 Given a graph, an output file and additionaly a damping factor,
-runs the page rank implementation and writes the eigen vector to
-the output file.
+runs the page rank implementation and writes the eigen vector in the file.
 
 ```
 ./bin/wreivtof <filepath> <output_file> [damping]
@@ -48,14 +47,14 @@ if the vector is normalized.
 ### wrprettof
 
 Given a graph and an output file, runs the page rank
-implementation for multiples damping factors and writes
-the execution times to the output file.
+implementation for multiple damping factors and writes
+the execution times in the file.
 
 ```
 ./bin/wrprettof <filepath> <output_file>
 ```
 
-It runs page rank, with damping 0.1 to 0.9 with a pace of 0.2.
+It runs page rank, with damping 0.1 to 0.9 with a pace of 0.02.
 
 Usage :
 
