@@ -10,6 +10,12 @@ There are severals binaries :
 ![](results/soc-Slashdot0811.png)
 
 
+## Project structure
+
+Sources are under `src`. Gnuplot scripts are under `scripts`. Eigen vectors and plots generated
+by me are under `results`. Binaries generated are under `bin`.
+
+
 ## Compilation
 
 ```
@@ -55,14 +61,6 @@ Usage :
 
 ```
 ./bin/wrprettof resources/email-Eu-core.txt time.txt
-```
-
-#### ompwrprettof
-
-Runs wrprettof with OpenMP parallelization. Better than wrprettof by a few milliseconds on my laptop.
-
-```
-./bin/ompwrprettof <filepath> <output_file>
 ```
 
 #### Plot of execution time
