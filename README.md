@@ -36,6 +36,9 @@ Usage :
 ./bin/wreivtof resources/email-Eu-core.txt result.txt 0.9
 ```
 
+It also prints the sum of all elements of the vector, so it might be usefull to check
+if the vector is normalized.
+
 ### wrprettof
 
 Given a graph and an output file, runs the page rank

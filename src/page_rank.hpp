@@ -1,6 +1,8 @@
 #ifndef PAGE_RANK_HPP
 #define PAGE_RANK_HPP
 
+#include <numeric>
+
 #include "SparseMatrix.hpp"
 
 /*
@@ -82,6 +84,16 @@ void write_vector_of_pairs_to_file(vector<pair<int, double>> v, string filepath)
     }
 
     output_file.close();
+}
+
+bool doublecmpr(double a, double b) {
+    return fabs(a - b) <= 0.1;
+}
+
+bool is_vector_normalized(vector<double> v) {
+    double sum = accumulate(v.begin(), v.end(), 0.0);
+
+    return doublecmpr(sum, 1.0);
 }
 
 #endif

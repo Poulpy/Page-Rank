@@ -29,6 +29,12 @@ int main(int argc, char **argv) {
 
     vector<double> eigen_vector = page_rank_power_method(transition_matrix, damping);
 
+    if (!is_vector_normalized(eigen_vector)) {
+        fprintf(stderr, "Vector is not normalized, sum of elements expected to be 1, got %f\n", accumulate(eigen_vector.begin(), eigen_vector.end(),0.0));
+    } else {
+        printf("%f\n", accumulate(eigen_vector.begin(), eigen_vector.end(),0.0));
+    }
+
     write_vector_to_file(output_file, eigen_vector);
 
     return 0;
