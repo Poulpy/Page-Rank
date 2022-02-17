@@ -23,6 +23,10 @@ class SparseMatrix {
 
         /*
          * Initializes a sparse matrix.
+         *
+         * Example:
+         *     vector<tuple<size_t, size_t, double>> values = { make_tuple(0, 1, 1.0) };
+         *     SparseMatrix matrix = SparseMatrix(2, values);
          */
         SparseMatrix(size_t length, vector<tuple<size_t, size_t, double>> non_nulls) {
             len = length;
@@ -31,6 +35,9 @@ class SparseMatrix {
 
         /*
          * Returns a copy of the matrix.
+         *
+         * Example:
+         *     SparseMatrix matrix_copied = matrix.copy();
          */
         SparseMatrix copy() {
             return SparseMatrix(len, tuples);
@@ -71,6 +78,9 @@ class SparseMatrix {
         /*
          * Product matrix-vector. Returns the result.
          *
+         * Example:
+         *     vector<double> result = matrix.dot(v);
+         *
          * Complexity: O(n), with n the size of tuples.
          */
         vector<double> dot(vector<double> v) {
@@ -89,7 +99,7 @@ class SparseMatrix {
         }
 
         /*
-         * Returns a prettified format of the matrix.
+         * Returns a prettified format of the matrix. For debug purposes.
          *
          * Complexity: O(n), with n the size of tuples.
          */

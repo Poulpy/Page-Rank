@@ -9,6 +9,9 @@
  * Reads a graph from a file and returns the sparse matrix
  * of it.
  *
+ * Example:
+ *     SparseMatrix m = read_matrix_from_file("graphe.txt");
+ *
  * Complexity: O(n), with n the number of edges.
  */
 SparseMatrix read_matrix_from_file(string filepath) {
@@ -38,6 +41,10 @@ SparseMatrix read_matrix_from_file(string filepath) {
  * damping: factor indicating if the walker should take a link/edge from the graph
  * max_iterations: number of maximum walks in the graph
  * epsilon: the precision error
+ *
+ * Example:
+ *     SparseMatrix m = read_matrix_from_file("graphe.txt");
+ *     vector<double> v = page_rank_power_method(transition_matrix);
  *
  * Complexity: O(max_iterations * (2n + m))
  *             with n the number of tuples, m the size of the matrix.
@@ -69,7 +76,11 @@ vector<double> page_rank_power_method(SparseMatrix transition_matrix, double dam
 
 /*
  * Writes a vector to a file. Adds a newline to each element.
- *
+ * 
+ * Example:
+ *     vector<double> v = { 1.0, 2.0 };
+ *     write_vector_to_file("vec.txt", v);
+ * 
  * Complexity: O(|v|)
  */
 void write_vector_to_file(string filepath, vector<double> v) {
@@ -103,13 +114,17 @@ void write_vector_of_pairs_to_file(vector<pair<int, double>> v, string filepath)
 
 /*
  * Compares 2 doubles with a precision error. The precision error is 0.1.
+ *
+ * Example:
+ *     assert(doublecmpr(1.0, 0.91));
+ *     assert(!doublecmpr(1.0, 0.81));
  */
 bool doublecmpr(double a, double b) {
     return fabs(a - b) <= 0.1;
 }
 
 /*
- * Checks if a vector is normalized, ie the sum of its elements is 1.
+ * Checks if a vector is normalized, ie the sum of its elements is 1 (nearly).
  */
 bool is_vector_normalized(vector<double> v) {
     double sum = accumulate(v.begin(), v.end(), 0.0);
