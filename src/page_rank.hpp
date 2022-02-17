@@ -8,6 +8,8 @@
 /*
  * Reads a graph from a file and returns the sparse matrix
  * of it.
+ *
+ * Complexity: O(n), with n the number of edges.
  */
 SparseMatrix read_matrix_from_file(string filepath) {
     std::ifstream file;
@@ -30,6 +32,15 @@ SparseMatrix read_matrix_from_file(string filepath) {
 
 /*
  * Page rank implementation using a sparse matrix.
+ *
+ * transition_matrix: a transition matrix, ie a 2D array showing the probability
+ *                    of walking from a node A to a node B
+ * damping: factor indicating if the walker should take a link/edge from the graph
+ * max_iterations: number of maximum walks in the graph
+ * epsilon: the precision error
+ *
+ * Complexity: O(max_iterations * (2n + m))
+ *             with n the number of tuples, m the size of the matrix.
  */
 vector<double> page_rank_power_method(SparseMatrix transition_matrix, double damping = 0.85,
                                       size_t max_iterations = 100, double epsilon = 0.0000001) {
@@ -58,6 +69,8 @@ vector<double> page_rank_power_method(SparseMatrix transition_matrix, double dam
 
 /*
  * Writes a vector to a file. Adds a newline to each element.
+ *
+ * Complexity: O(|v|)
  */
 void write_vector_to_file(string filepath, vector<double> v) {
     std::ofstream output_file;
@@ -73,6 +86,8 @@ void write_vector_to_file(string filepath, vector<double> v) {
 
 /*
  * Writes a vector of pairs to a file. Adds a newline to each element.
+ *
+ * Complexity: O(|v|)
  */
 void write_vector_of_pairs_to_file(vector<pair<int, double>> v, string filepath) {
     std::ofstream output_file;
@@ -86,10 +101,16 @@ void write_vector_of_pairs_to_file(vector<pair<int, double>> v, string filepath)
     output_file.close();
 }
 
+/*
+ * Compares 2 doubles with a precision error. The precision error is 0.1.
+ */
 bool doublecmpr(double a, double b) {
     return fabs(a - b) <= 0.1;
 }
 
+/*
+ * Checks if a vector is normalized, ie the sum of its elements is 1.
+ */
 bool is_vector_normalized(vector<double> v) {
     double sum = accumulate(v.begin(), v.end(), 0.0);
 

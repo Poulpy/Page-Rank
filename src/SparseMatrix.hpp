@@ -9,12 +9,16 @@ using namespace std;
 /*
  * Implementation of a sparse matrix, using an array of
  * triplets : (row, column, value). The other values are
- * zeros
+ * zeros.
  */
 class SparseMatrix {
 
     public:
+
+        // Dimension of the matrix: row and column.
         size_t len;
+
+        // Tuples of data (row, column, value).
         vector<tuple<size_t, size_t, double>> tuples;
 
         /*
@@ -34,6 +38,8 @@ class SparseMatrix {
 
         /*
          * Converts the matrix into a transition matrix, and returns the result.
+         *
+         * Complexity: O(2n), with n the size of tuples.
          */
         SparseMatrix to_transition_matrix() {
             SparseMatrix new_matrix = copy();
@@ -64,6 +70,8 @@ class SparseMatrix {
 
         /*
          * Product matrix-vector. Returns the result.
+         *
+         * Complexity: O(n), with n the size of tuples.
          */
         vector<double> dot(vector<double> v) {
             vector<double> rst(v.size(), 0.0);
@@ -82,6 +90,8 @@ class SparseMatrix {
 
         /*
          * Returns a prettified format of the matrix.
+         *
+         * Complexity: O(n), with n the size of tuples.
          */
         string to_string() {
             stringstream str_strm;
