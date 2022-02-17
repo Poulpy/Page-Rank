@@ -3,7 +3,7 @@
 Simple implementation of the page rank algorithm, more specifically the power
 method.
 
-There are severalsbinaries :
+There are several binaries :
 - wreivtof, write eigen vector to file
 - wrprettof, write page rank execution time to file
 
@@ -18,7 +18,7 @@ by me are under `results`. Binaries generated are under `bin`.
 
 ## Compilation
 
-```
+```bash
 make
 ```
 
@@ -37,7 +37,7 @@ Damping factor is 0.85 by default.
 
 Usage :
 
-```
+```bash
 ./bin/wreivtof resources/email-Eu-core.txt result.txt 0.9
 ```
 
@@ -58,7 +58,7 @@ It runs page rank, with damping 0.1 to 0.9 with a pace of 0.02.
 
 Usage :
 
-```
+```bash
 ./bin/wrprettof resources/email-Eu-core.txt time.txt
 ```
 
@@ -66,12 +66,8 @@ Usage :
 
 You can then generate a chart from the execution times.
 
-```
+```bash
 gnuplot -c scripts/chart.gp <output_file> > <png_file>
 gnuplot -c scripts/chart.gp time.txt > chart.png
 ```
 
-# TODO
-
-- Documentation
-- Multithreading with OpenMP
